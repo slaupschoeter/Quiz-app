@@ -1,34 +1,47 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useEffect, useState } from 'react'
+import axios from 'axios';
 
-function App() {
-  const [count, setCount] = useState(0)
+interface Question {
+  id: number
+  question: string
+  answer: string
+  category: string
+}
+
+const App: React.FC = () => {
+  // 2. Gebruik een generieke useState met Question of null
+  const [question, setQuestion] = useState<Question | null>(null)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    // 3. Geef de verwachte response-type mee aan axios.get
+    axios
+      .get<Question>('http://127.0.0.1:5000/questions')
+      .then(response => {
+        setQuestion(response.data)
+      })
+      .catch(err => {
+        console.error(err)
+        setError('Kan vraag niet laden')
+      })
+  }, [])
+
+  if (error) {
+    return <p>{error}</p>
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div className="App">
+      {question ? (
+        <div>
+          <h2>Vraag #{question.id}</h2>
+          <p>{question.question}</p>
+          <small>Categorie: {question.category}</small>
+        </div>
+      ) : (
+        <p>Loading…</p>
+      )}
+    </div>
   )
 }
 

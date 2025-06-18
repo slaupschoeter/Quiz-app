@@ -1,5 +1,7 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, abort
+from flask_cors import CORS
 from flask_restful import Api
+from sqlalchemy.sql.expression import func
 from database import db, init_db, load_question, Question
 
 # Maak de Flask app aan in een aparte functie
@@ -8,8 +10,7 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     api = Api(app)
-
-    # Initialiseer de database
+    CORS(app)
     init_db(app)
 
     return app
@@ -24,24 +25,21 @@ def home():
 
 @app.route('/questions', methods=['GET'])
 def get_questions():
-    questions = Question.query.all()
-    questions_list = []
+    question = Question.query.order_by(func.random()).first()
 
-    for question in questions:
-        questions_list.append({
-            'id': question.id,
-            'question': question.question,
-            'answer': question.answer,
-            'category': question.category
-        })
-    return jsonify(questions_list)
+    if not question:
+        abort(404, description="No questions found")
+    return jsonify({
+        'id': question.id,
+        'question': question.question,
+        'answer': question.answer,
+        'category': question.category
+    })
 
 if __name__ == '__main__':
-    # Maak de database en tabellen aan (indien nodig)
     with app.app_context():
         db.create_all()
-    # Laad de vragen uit het CSV-bestand in de database
-    load_question(app, 'data/quizvragen.csv')  # Vervang dit door het pad naar je CSV-bestand
 
-    # Start de server
+    load_question(app, 'data/quizvragen.csv')  
+
     app.run(debug=True)

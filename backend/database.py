@@ -17,6 +17,8 @@ def init_db(app):
 
 def load_question(app, file):
     with app.app_context():
+        #db.session.query(Question).delete()
+        #db.session.commit()
         df = pd.read_csv(file)
         for index, row in df.iterrows():
             existing_question = Question.query.filter_by(question=row['Vraag']).first()
