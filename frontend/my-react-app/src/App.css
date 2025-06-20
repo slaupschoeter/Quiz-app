@@ -40,3 +40,36 @@
 .read-the-docs {
   color: #888;
 }
+
+.App {
+  background-color: #000;         /* zwart */
+  color: #1a5188;                 /* donkerblauw */
+  text-align: center;             /* gecentreerde tekst */
+  min-height: 100vh;              /* volledige schermhoogte */
+  padding: 2rem;
+}
+
+button {
+  margin-top: 1.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #3a77b4;      /* donkerblauw */
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+/* 1. Zorg dat html en body de volledige viewport beslaan */
+html, body {
+  height: 100%;        /* 100% van de viewport */
+  margin: 0;           /* default margins weghalen */
+}
+
+/* 2. Zet de achtergrondkleur op html/body */
+html, body {
+  background-color: #000;   /* zwart */ 
+}
